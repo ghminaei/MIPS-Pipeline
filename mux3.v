@@ -9,8 +9,7 @@ module mux3 (
     );
     parameter n;
     input sel1,
-    sel2,
-    sel3;
+    sel2;
     input [n-1:0]inp1, inp2, inp3;
     output [n-1:0]out;
     assign out = {sel1, sel2} == 2'b00 ? inp1 : 
