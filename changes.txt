@@ -1,0 +1,2 @@
+MUX 3:
+    -selected with 2 signals
