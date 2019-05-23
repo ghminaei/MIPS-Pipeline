@@ -21,13 +21,18 @@ module PiplineMips(
     wire [3:0]exWB;
     wire [1:0]exM;
     wire [4:0]exEX;
-    wire [31:0]exReadD1, exRead2, exAdr;
-    wire [4:0]exRd, exRt, exRs;
+    wire [31:0]exReadD1, exRead2, exAdr,exAluD,aluIn1,aluIn2, aluRes;
+    wire [4:0]exRd, exRt, exRs, exRdOut;
+    wire [1:0] selA,selB;
     //MEM--------------------:
     wire [3:0]memWB;
     wire [1:0]memM;
+    wire [4:0]memRd;
+    wire [31:0]memAdr,memData,memOut;
     //WB---------------------:
     wire [1:0]wbWB;
+    wire [31:0]wbReadD, wbAdr, wbWriteD;
+    wire [4:0]wbRd;
     //IF:
     InstMemory instMem (
     .address(pcOut),
@@ -49,7 +54,7 @@ module PiplineMips(
     .out(ifPc)
     );
 
-    mux3 mux1(
+    mux3 m1(
     .sel(pcSrc),
     .inp1(ifPC),
     .inp2(brAdr),
@@ -72,7 +77,7 @@ module PiplineMips(
     //ID:
     HazardUnit hazardUnit(
     .IDEXMemRead(exM[0]), // just 1 bit
-    .MEMmemRead(), // just 1 bit
+    .MEMmemRead(memM[0]), // just 1 bit
     .beq(beq), 
     .bne(bne), 
     .equal(eq), //from comperator 
@@ -80,8 +85,8 @@ module PiplineMips(
     .EXERegWrite(exWB[3]),
     .IDRs(idInst[25:21]), 
     .IDRt(idInst[20:16]), 
-    .EXERdOut(), 
-    .MEMRd(),
+    .EXERdOut(exRdOut), 
+    .MEMRd(memRd),
     .IFIDWrite(ifIdWrite),
     .pcWrite(pcWrite), 
     .ifNop(ifNop)
@@ -115,8 +120,8 @@ module PiplineMips(
     .clk(clk), 
     .readReg1(idInst[25:21]),
     .readReg2(idInst[20:16]), 
-    .writeReg(), 
-    .writeData(), 
+    .writeReg(wbRd), 
+    .writeData(wbWriteD), 
     .regWrite(wbWB[1]), 
     .readData1(idReadD1), 
     .readData2(idReadD2)
@@ -178,6 +183,96 @@ module PiplineMips(
     .ExRt(exRt),
     .ExRd(exRd),
     .ExRs(exRs)
+    );
+    mux3 m3(
+    .sel(selA),
+    .inp1(exReadD1),
+    .inp2(memAdr),
+    .inp3(wbWriteD),
+    .out(aluIn1)
+    );
+
+    mux3 m4(
+    .sel(selB),
+    .inp1(exReadD2),
+    .inp2(memAdr),
+    .inp3(wbWriteD),
+    .out(exAluD)
+    );
+    mux2 m5(
+    .sel(exEX[4]),
+    .inp1(exAluD),
+    .inp2(exAdr),
+    .out(aluIn2)
+    );
+
+    mux2 m6(
+    .sel(exEX[3]),
+    .inp1(exRt),
+    .inp2(exRd),
+    .out(exRdOut)
+    );
+
+    ALU alu(
+    .inp1(aluIn1),
+    .inp2(aluIn2),
+    .func(exEx[2:0]),
+    .out(aluRes),
+    );
+
+    FU fu(
+    .MemWb(memWB[1]),
+    .MemRd(memRd),
+    .WbWb(wbWB[1]),
+    .WbRd(wbRd),
+    .ExRs(exRs),
+    .ExRt(exRt),
+    .selA(selA),
+    .selB(selB)
+    );
+
+    //EXMEM:
+    ExeMemReg exmemReg(
+    .clk(clk),
+    .rst(rst),
+    .ExWb(exWB),
+    .ExMem(exMEM),
+    .ExAluRes(aluRes),
+    .ExWriteD(exAluD),
+    .ExRd(exRdOut),
+    .MemWb(memWB),
+    .MemMem(memM),
+    .MemAluRes(memAdr),
+    .MemWriteD(memData),
+    .MemRd(memRd)
+    );
+    //MEM:
+    DataMemory dataMem(
+    .address(memAdr),
+    .writeData(memData),
+    .readData(memOut),
+    .memWrite(memM[1]),
+    .memRead(memM[0])
+    );
+    //MEMWB:
+    MemWbReg memwbReg (
+    .clk(clk),
+    .rst(rst),
+    .MemWb(memWB),
+    .MemReadD(memOut),
+    .MemAdr(memAdr),
+    .MemRd(memRd),
+    .WbWb(wbWB),
+    .WbReadD(wbReadD),
+    .WbAdr(wbAdr),
+    .WbRd(wbRd)
+    );
+    //WB:
+    mux2 m7(
+    .sel(wbWB[0]),
+    .inp1(wbReadD),
+    .inp2(wbAdr),
+    .out(wbWriteD)
     );
 endmodule
 
