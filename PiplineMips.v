@@ -3,6 +3,8 @@ module PiplineMips(
     clk,
     rst
     );
+
+    input clk, rst;
     //IF----------------------:
     wire [31:0]pcOut, pcIn, iFPC, ifInst, jAdr, brAdr;
     wire ifFlush, pcWrite;
@@ -39,7 +41,7 @@ module PiplineMips(
     .out(ifInst)
     );
 
-    register pcReg(
+    register #(32) pcReg(
     .clk(clk),
     .rst(rst),
     .ld(pcWrite),
@@ -98,7 +100,7 @@ module PiplineMips(
     .funcIn(idInst[5:0]),
     .funcOut(funcOut),
     .memRead(idM[0]),
-    .memWrite(idMem[1]),
+    .memWrite(idM[1]),
     .pcSrc(pcSrc),
     .aluSrc(idEX[4]),
     .regDst(idEX[3]),
@@ -113,7 +115,7 @@ module PiplineMips(
     aluCU alucu(
     .rst(rst),
     .func(funcOut),
-    .aluFunc(idEX[2:0]),
+    .aluFunc(idEX[2:0])
     );
 
     RegisterFile registerFile(
@@ -127,7 +129,7 @@ module PiplineMips(
     .readData2(idReadD2)
     );
 
-    Comparator comp #(32)(
+    Comparator #(32) comp (
     .inp1(idReadD1),
     .inp2(idReadD2),
     .equal(eq)
@@ -149,13 +151,13 @@ module PiplineMips(
     .out(brAdr)
     );
 
-    Concatenator concatenator1 #(26, 4) (
+    Concatenator #(26, 4) concatenator1 (
     .inp(idInst[25:0]),
     .concatPart(idPC[31:28]),
     .out(concat1Out)
     );
 
-    Concatenator concatenator2 #(2, 30) (
+    Concatenator #(2, 30) concatenator2 (
     .inp(2'b00),
     .concatPart(concat1Out),
     .out(jAdr)
@@ -216,8 +218,8 @@ module PiplineMips(
     ALU alu(
     .inp1(aluIn1),
     .inp2(aluIn2),
-    .func(exEx[2:0]),
-    .out(aluRes),
+    .func(exEX[2:0]),
+    .out(aluRes)
     );
 
     FU fu(
