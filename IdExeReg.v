@@ -26,12 +26,12 @@ module IdExeReg(
 input rst,clk;
 input[3:0] IdWb;
 input[1:0] IdM;
-input[4:0] IdEx , IdRs , IdRd, IdRs;
+input[4:0] IdEx , IdRs , IdRd, IdRt;
 input[31:0] IdReadD1,IdReadD2,IdAdr;
 
 output reg[3:0] ExWb;
 output reg[1:0] ExM;
-output reg[4:0] ExEx , ExRs , ExRd, ExRs;
+output reg[4:0] ExEx , ExRt , ExRd, ExRs;
 output reg[31:0] ExReadD1,ExReadD2,ExAdr;
 
 always@(posedge clk,posedge rst)begin
