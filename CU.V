@@ -41,7 +41,8 @@ module CU (
 
     parameter LW = 6'b100011, SW = 6'b101011,
               BEQ = 6'b000100, RTYPE = 6'b000000,
-              BNE = 6'b000101,  J = 6'b000010;
+              BNE = 6'b000101,  J = 6'b000010
+              NOPE = 6'b000001;
     
     parameter ADDF = 6'b100000, NOPF = 6'b000000; 
 
@@ -133,6 +134,20 @@ module CU (
                 bne = 0;
                 j = 1;
               end
+            NOPE: begin
+                memRead = 0;
+                memWrite = 0;
+                pcSrc = 2'b00;
+
+                aluSrc = 0;
+                funcOut = NOPF;
+                regDst = 0;
+
+                regWrite = 0;
+                memToReg = 0;
+                beq = 0;
+                bne = 0;
+            end
             endcase
         end
     end
