@@ -23,7 +23,7 @@ module CU (
     );
     input rst ,eqRegs;
     input [5:0]opcode;
-    input [5:0]funcIn
+    input [5:0]funcIn;
     output reg [5:0]funcOut;
     output reg[1:0]pcSrc;
     output reg memRead,
@@ -35,8 +35,8 @@ module CU (
     regWrite,
     memToReg,
     beq,
-    bne;
-    output reg [2:0] aluOp;
+    bne,
+    j;
 
 
     parameter LW = 6'b100011, SW = 6'b101011,
@@ -93,9 +93,7 @@ module CU (
                 memRead = 0;
                 memWrite = 0;
                 funcOut = NOPF;
-                if(eqRegs == 1){
-                   pcSrc = 2'b01; 
-                }
+                if(eqRegs == 1)pcSrc = 2'b01; 
                 else pcSrc = 2'b00;
                 beq = 1;
                 bne = 0;
@@ -120,9 +118,9 @@ module CU (
                 memRead = 0;
                 memWrite = 0;
                 funcOut = NOPF;
-                if(eqRegs == 1){
+                if(eqRegs == 1)
                    pcSrc = 2'b00; 
-                }
+              
                 else pcSrc = 2'b01;
                 beq = 0;
                 bne = 1;
@@ -134,6 +132,7 @@ module CU (
                 beq = 0;
                 bne = 0;
                 j = 1;
+              end
             endcase
         end
     end
