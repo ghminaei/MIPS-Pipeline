@@ -14,6 +14,7 @@ module PiplineMips(
     wire [31:0]idInst, idPC, idReadD1, idReadD2, idAdr, idAdrSh;
     wire [29:0]concat1Out;
     wire ifIdWrite, bne, beq, j, ifNop, eq;
+    wire [8:0]ctrlIn, ctrlOut;
     wire [5:0]funcOut;
     wire [4:0]idEX;
     wire [1:0]idWB;
@@ -56,7 +57,7 @@ module PiplineMips(
     .out(ifPc)
     );
 
-    mux3 m1(
+    mux3 #(32) m1(
     .sel(pcSrc),
     .inp1(ifPC),
     .inp2(brAdr),
@@ -94,6 +95,18 @@ module PiplineMips(
     .ifNop(ifNop)
     );
 
+    mux2 #(9) m2 (
+    .sel(ifNop),
+    .inp1(9'b0),
+    .inp2(ctrlIn),
+    .out(ctrlOut)
+    );
+    wire[2:0] aluOp;
+    wire memRead,memWrite,aluSrc,regDst,regWrite,memToReg;
+    assign ctrlIn = {aluSrc,regDst,aluOp ,memWrite,memRead,regWrite,memToReg};
+    assign idEX = ctrlOut[8:4];
+    assign idM = ctrlOut[3:2];
+    assign idWB = ctrlOut[1:0];
     CU cu (
     .rst(rst),
     .opcode(idInst[31:26]),
@@ -111,11 +124,11 @@ module PiplineMips(
     .bne(bne),
     .j(j)
     );
-
+    
     aluCU alucu(
     .rst(rst),
     .func(funcOut),
-    .aluFunc(idEX[2:0])
+    .aluFunc(aluOp)
     );
 
     RegisterFile registerFile(
@@ -140,7 +153,7 @@ module PiplineMips(
     .out(idAdr)
     );
 
-    ShifterL shift(
+    ShifterL #(2) shift(
     .inp(idAdr),
     .out(idAdrSh)
     );
@@ -186,7 +199,7 @@ module PiplineMips(
     .ExRd(exRd),
     .ExRs(exRs)
     );
-    mux3 m3(
+    mux3 #(32) m3(
     .sel(selA),
     .inp1(exReadD1),
     .inp2(memAdr),
@@ -194,21 +207,21 @@ module PiplineMips(
     .out(aluIn1)
     );
 
-    mux3 m4(
+    mux3 #(32) m4(
     .sel(selB),
     .inp1(exReadD2),
     .inp2(memAdr),
     .inp3(wbWriteD),
     .out(exAluD)
     );
-    mux2 m5(
+    mux2 #(32) m5(
     .sel(exEX[4]),
     .inp1(exAluD),
     .inp2(exAdr),
     .out(aluIn2)
     );
 
-    mux2 m6(
+    mux2 #(5) m6(
     .sel(exEX[3]),
     .inp1(exRt),
     .inp2(exRd),
@@ -270,7 +283,7 @@ module PiplineMips(
     .WbRd(wbRd)
     );
     //WB:
-    mux2 m7(
+    mux2 #(32) m7(
     .sel(wbWB[0]),
     .inp1(wbReadD),
     .inp2(wbAdr),

@@ -15,7 +15,7 @@ input[4:0] MemRd,
            WbRd,
            ExRs,
            ExRt;
-output reg[1:0] selA,
+output [1:0] selA,
                 selB;
 
 assign selA = (MemWb == 1 && MemRd == ExRs && MemRd!=5'b0) ? 2'b01 :

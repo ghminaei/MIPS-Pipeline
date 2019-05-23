@@ -19,5 +19,5 @@ module InstMemory (
         $readmemb("instructions.txt", memory);
     end
 
-    assign out = memory[address];
+    assign out = {memory[address], memory[address+1], memory[address+2], memory[address+3]};
 endmodule
