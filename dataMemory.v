@@ -6,7 +6,7 @@ module DataMemory (
     memWrite,
     memRead
     );
-    parameter WORD = 8, LENGTH = 11'd4294967295, ADDRESSL = 32;
+    parameter WORD = 8, LENGTH = 32'd4294967295, ADDRESSL = 32;
     input [ADDRESSL-1:0]address;
     input [WORD-1:0]writeData;
     input memWrite,
