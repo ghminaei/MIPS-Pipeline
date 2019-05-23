@@ -35,7 +35,7 @@ module HazardUnit (
 
     reg stall = 0;
     wire LWCmdEXE, LWCmdMEM, DataDepEXE, DataDepMEM;
-    assign LWCmd = IDEXMemRead;
+    assign LWCmdEXE = IDEXMemRead;
     assign LWCmdMEM = MEMmemRead;
     assign DataDepEXE = (EXERdOut != 5'b0 && (EXERdOut == IDRs || EXERdOut == IDRt));
     assign DataDepMEM = (MEMRd != 5'b0 && (MEMRd == IDRs || MEMRd == IDRt));
@@ -45,7 +45,7 @@ module HazardUnit (
         pcWrite = 1;
         ifNop = 0;
 
-        if (DataDepEXE && LWCmd) begin
+        if (DataDepEXE && LWCmdEXE) begin
             //lw with data dependency -> stall
             stall = 1;
             IFIDWrite = 0;
