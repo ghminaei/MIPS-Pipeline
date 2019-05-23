@@ -29,7 +29,7 @@ module MemWbReg (
             WbWb = 4'b0;
             WbReadD = 32'b0;
             WbAdr = 32'b0;
-            WbRd 5'b0;
+            WbRd = 5'b0;
         end
         else begin
             WbWb = MemWb;
