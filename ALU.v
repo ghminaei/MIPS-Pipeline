@@ -12,12 +12,13 @@ module ALU (
 
     parameter  ADD = 3'b010, SUB = 3'b110, 
                AND = 3'b000, OR = 3'b001,
-               SLT = 3'b111;
+               SLT = 3'b111, NOP = 3'b011;
 
     assign out = (func == ADD) ? inp1 + inp2 :
                  (func == SUB) ? inp1 - inp2 ://chi ro bayad too mips az chi kam konim ?
                  (func == AND) ? inp1 & inp2 :
                  (func == OR) ? inp1 | inp2 ://is this or correct?
-                 (func == SLT) ? ((inp1 < inp2) ? inp1 : inp2) :
+                 (func == SLT) ? ((inp1 < inp2) ? 32'd1 : 32'b0) :
+                 (func == NOP) ? out :
                  out;         
 endmodule
