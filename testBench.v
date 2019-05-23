@@ -3,7 +3,7 @@ module TestBench ();
     parameter CLK = 100;
     reg clk = 0;
     reg rst = 0;
-    piplineMips UUT(
+    PiplineMips piplineMips UUT(
         .clk(clk),
         .rst(rst)
     );

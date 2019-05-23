@@ -17,14 +17,14 @@ module ExeMemReg (
     MemRd
     );
     input clk, rst;
-    input [3:0]ExWb;
+    input [1:0]ExWb;
     input [1:0]ExMem;
     input ExZero;
     input [31:0]ExAluRes,
     ExWriteD;
     input [4:0]ExRd;
     
-    output reg [3:0]MemWb;
+    output reg [1:0]MemWb;
     output reg [1:0]MemMem;
     output reg MemZero;
     output reg [31:0]MemAluRes,
@@ -33,7 +33,7 @@ module ExeMemReg (
 
     always @(posedge clk, posedge rst) begin
         if (rst) begin
-            MemWb = 4'b0;
+            MemWb = 2'b0;
             MemMem = 2'b0;
             MemZero = 1'b0;
             MemAluRes = 32'b0;

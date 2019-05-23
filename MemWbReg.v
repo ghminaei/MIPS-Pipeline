@@ -13,12 +13,12 @@ module MemWbReg (
     WbRd
     );
     input clk, rst;
-    input [3:0]MemWb;
+    input [1:0]MemWb;
     input [31:0]MemReadD;
     input [31:0]MemAdr;
     input [4:0]MemRd;
 
-    output reg [3:0]WbWb;
+    output reg [1:0]WbWb;
     output reg [31:0]WbReadD;
     output reg [31:0]WbAdr;
     output reg [4:0]WbRd;
@@ -26,7 +26,7 @@ module MemWbReg (
 
     always @(posedge clk, posedge rst) begin
         if (rst) begin
-            WbWb = 4'b0;
+            WbWb = 2'b0;
             WbReadD = 32'b0;
             WbAdr = 32'b0;
             WbRd = 5'b0;
