@@ -4,7 +4,7 @@ module Adder (
     inp2,
     out
     );
-    parameter n = 10;
+    parameter n = 32;
     input [n-1:0]inp1,
     inp2;
     output [n-1:0]out;

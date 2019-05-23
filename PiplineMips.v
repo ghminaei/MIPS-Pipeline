@@ -52,9 +52,9 @@ module PiplineMips(
     );
 
     Adder adder1(
-    .inp1(3'b100),
+    .inp1(32'd4),
     .inp2(pcOut),
-    .out(ifPc)
+    .out(ifPC)
     );
 
     mux3 #(32) m1(
@@ -153,7 +153,7 @@ module PiplineMips(
     .out(idAdr)
     );
 
-    ShifterL #(2) shift(
+    ShifterL #(32) shift(
     .inp(idAdr),
     .out(idAdrSh)
     );
