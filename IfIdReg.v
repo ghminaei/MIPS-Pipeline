@@ -23,12 +23,12 @@ output reg[31:0] IdPc,IdInst;
 always@(posedge clk,posedge rst)begin
     if(rst) begin
         IdPc = 32'b0;
-        IdInst = 32'b0;
+        IdInst = 32'b00000100000000000000000000000000;
     end
     else begin
         if(IfFlush) begin
             IdPc = 32'b0;
-            IdInst = 32'b0;
+            IdInst = 32'b00000100000000000000000000000000;
         end
         else begin
             if(IfIdWrite)begin 

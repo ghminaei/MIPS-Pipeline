@@ -6,7 +6,7 @@ module PiplineMips(
 
     input clk, rst;
     //IF----------------------:
-    wire [31:0]pcOut, pcIn, iFPC, ifInst, jAdr, brAdr;
+    wire [31:0]pcOut, pcIn, ifPC, ifInst, jAdr, brAdr;
     wire ifFlush, pcWrite;
     wire [1:0]pcSrc;
 
@@ -19,12 +19,12 @@ module PiplineMips(
     wire [4:0]idEX;
     wire [1:0]idWB;
     wire [1:0]idM;
-    assign ifFlush = ifNop;
+    //assign ifFlush = ~ifNop;
     //EX----------------------:
     wire [3:0]exWB;
     wire [1:0]exM;
     wire [4:0]exEX;
-    wire [31:0]exReadD1, exRead2, exAdr,exAluD,aluIn1,aluIn2, aluRes;
+    wire [31:0]exReadD1, exReadD2, exAdr,exAluD,aluIn1,aluIn2, aluRes;
     wire [4:0]exRd, exRt, exRs, exRdOut;
     wire [1:0] selA,selB;
     //MEM--------------------:
@@ -112,13 +112,13 @@ module PiplineMips(
     .opcode(idInst[31:26]),
     .funcIn(idInst[5:0]),
     .funcOut(funcOut),
-    .memRead(idM[0]),
-    .memWrite(idM[1]),
+    .memRead(memRead),
+    .memWrite(memWrite),
     .pcSrc(pcSrc),
-    .aluSrc(idEX[4]),
-    .regDst(idEX[3]),
-    .regWrite(idWB[1]),
-    .memToReg(idWB[0]),
+    .aluSrc(aluSrc),
+    .regDst(regDst),
+    .regWrite(regWrite),
+    .memToReg(memToReg),
     .eqRegs(eq),
     .beq(beq),
     .bne(bne),
@@ -193,7 +193,7 @@ module PiplineMips(
     .ExM(exM),
     .ExEx(exEX),
     .ExReadD1(exReadD1),
-    .ExReadD2(ExReadD2),
+    .ExReadD2(exReadD2),
     .ExAdr(exAdr),
     .ExRt(exRt),
     .ExRd(exRd),
@@ -251,7 +251,7 @@ module PiplineMips(
     .clk(clk),
     .rst(rst),
     .ExWb(exWB),
-    .ExMem(exMEM),
+    .ExMem(exM),
     .ExAluRes(aluRes),
     .ExWriteD(exAluD),
     .ExRd(exRdOut),
@@ -285,8 +285,8 @@ module PiplineMips(
     //WB:
     mux2 #(32) m7(
     .sel(wbWB[0]),
-    .inp1(wbReadD),
-    .inp2(wbAdr),
+    .inp1(wbAdr),
+    .inp2(wbReadD),
     .out(wbWriteD)
     );
 endmodule

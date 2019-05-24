@@ -3,7 +3,8 @@ module InstMemory (
     address,
     out
     );
-    parameter WORD = 8, LENGTH = 32'd4294967295, PCL = 32;
+    //32'd4294967295
+    parameter WORD = 8, LENGTH = 2000, PCL = 32;
     input [PCL-1:0]address;
     output [4*WORD-1:0]out;
     reg [WORD-1:0]memory[LENGTH-1:0];

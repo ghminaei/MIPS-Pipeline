@@ -13,7 +13,8 @@ module HazardUnit (
     MEMRd,
     IFIDWrite,
     pcWrite, 
-    ifNop // and also IFFlush
+    ifNop,
+    ifFlush
     );
 
     input IDEXMemRead,
@@ -31,7 +32,8 @@ module HazardUnit (
 
     output reg IFIDWrite,
     pcWrite, 
-    ifNop;
+    ifNop,
+    ifFlush;
 
     reg stall = 0;
     wire LWCmdEXE, LWCmdMEM, DataDepEXE, DataDepMEM;
@@ -43,13 +45,15 @@ module HazardUnit (
     always@(*) begin
         IFIDWrite = 1;
         pcWrite = 1;
-        ifNop = 0;
+        ifNop = 1;
+        ifFlush = 0;
 
         if (DataDepEXE && LWCmdEXE) begin
             //lw with data dependency -> stall
             stall = 1;
             IFIDWrite = 0;
             pcWrite = 0;
+            ifNop = 0;
         end
         
         if (LWCmdMEM && DataDepMEM && (beq || bne)) begin
@@ -57,15 +61,20 @@ module HazardUnit (
             stall = 1;
             IFIDWrite = 0;
             pcWrite = 0;
+            ifNop = 0;
         end
 
-        if (jump) 
+        if (jump) begin
             //flush after jump
-            ifNop = 1;
+            ifNop = 0;
+            ifFlush = 1;
+        end
         
-        if ((beq && equal) || (bne && ~equal))
+        if ((beq && equal) || (bne && ~equal)) begin
             //flush after beq bne
-            ifNop = 1;
+            ifNop = 0;
+            ifFlush = 1;
+        end
 
     end
     

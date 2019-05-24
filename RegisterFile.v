@@ -20,6 +20,8 @@ module RegisterFile(
 	initial begin
         for(i = 0; i < 32; i = i+1)
             Registers[i] = 32'b0;
+		Registers[1] = 32'd3;
+		Registers[3] = 32'd5;
 	end
 	
 	
