@@ -7,6 +7,7 @@ module HazardUnit (
     equal, //from comperator 
     jump, 
     EXERegWrite,
+    MEMRegWrite, //hereee
     IDRs, 
     IDRt, 
     EXERdOut, 
@@ -23,7 +24,8 @@ module HazardUnit (
     bne, 
     equal,
     jump,
-    EXERegWrite;
+    EXERegWrite,
+    MEMRegWrite;
 
     input [4:0] IDRs, 
     IDRt, 
@@ -36,9 +38,11 @@ module HazardUnit (
     ifFlush;
 
     reg stall = 0;
-    wire LWCmdEXE, LWCmdMEM, DataDepEXE, DataDepMEM;
+    wire LWCmdEXE, LWCmdMEM, DataDepEXE, DataDepMEM, RTypeCmdEXE, RTypeCmdMEM;
     assign LWCmdEXE = IDEXMemRead;
     assign LWCmdMEM = MEMmemRead;
+    assign RTypeCmdEXE = EXERegWrite;
+    assign RTypeCmdMEM = MEMRegWrite;
     assign DataDepEXE = (EXERdOut != 5'b0 && (EXERdOut == IDRs || EXERdOut == IDRt));
     assign DataDepMEM = (MEMRd != 5'b0 && (MEMRd == IDRs || MEMRd == IDRt));
 
@@ -58,6 +62,22 @@ module HazardUnit (
         
         if (LWCmdMEM && DataDepMEM && (beq || bne)) begin
             //lw secound stall if beq bne
+            stall = 1;
+            IFIDWrite = 0;
+            pcWrite = 0;
+            ifNop = 0;
+        end
+
+        if (RTypeCmdEXE && (beq || bne) && DataDepEXE) begin
+            //Rtype & beq -> first stall
+            stall = 1;
+            IFIDWrite = 0;
+            pcWrite = 0;
+            ifNop = 0;
+        end
+
+        if (RTypeCmdMEM && (beq || bne) && DataDepMEM) begin
+            //Rtype & beq -> sec stall
             stall = 1;
             IFIDWrite = 0;
             pcWrite = 0;
