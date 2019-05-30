@@ -13,29 +13,29 @@ module RegisterFile(
 	input [31:0] writeData;
 	input regWrite, clk;
 	
-	output reg [31:0] readData1, readData2;
+	output [31:0] readData1, readData2;
 	reg [31:0]Registers[0:31];
 	
 	integer i;
 	initial begin
         for(i = 0; i < 32; i = i+1)
             Registers[i] = 32'b0;
-		Registers[1] = 32'd3;
-		Registers[3] = 32'd5;
+		    // Registers[1] = 32'd1;
+		    // Registers[6] = 32'd2;
 	end
 	
 	
-	always @(posedge clk) begin
+	always @(negedge clk) begin
 		if (regWrite) begin
             if (writeReg != 5'b0)
-			    Registers[writeReg] <= writeData;
+			    Registers[writeReg] = writeData;
 		end
 	end
 	
-	always @(negedge clk)
-	begin
-		readData1 <= Registers[readReg1];
-		readData2 <= Registers[readReg2];
-	end
+	// always @(negedge clk)
+	// begin
+	assign readData1 = Registers[readReg1];
+	assign readData2 = Registers[readReg2];
+	//end
 	
 endmodule

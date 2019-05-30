@@ -1,0 +1,11 @@
+max = 100  #max = r1
+one = 1 #one = R2
+limit = 3  #limit R5
+do
+    i += one #i = R4
+    num = getNum() #num = R6
+    if max < num :
+        res = true # res = R7
+    if res == true
+        max = num + 0
+while(i <= limit)

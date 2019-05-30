@@ -51,6 +51,7 @@ module HazardUnit (
         pcWrite = 1;
         ifNop = 1;
         ifFlush = 0;
+        stall = 0;
 
         if (DataDepEXE && LWCmdEXE) begin
             //lw with data dependency -> stall
@@ -84,13 +85,13 @@ module HazardUnit (
             ifNop = 0;
         end
 
-        if (jump) begin
+        if (jump && ~stall) begin
             //flush after jump
             ifNop = 0;
             ifFlush = 1;
         end
         
-        if ((beq && equal) || (bne && ~equal)) begin
+        if ((beq && equal && ~stall) || (bne && ~equal && ~stall)) begin
             //flush after beq bne
             ifNop = 0;
             ifFlush = 1;

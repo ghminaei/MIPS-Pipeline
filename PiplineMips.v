@@ -85,14 +85,16 @@ module PiplineMips(
     .bne(bne), 
     .equal(eq), //from comperator 
     .jump(j), 
-    .EXERegWrite(exWB[3]),
+    .EXERegWrite(exWB[1]),
+    .MEMRegWrite(memWB[1]),
     .IDRs(idInst[25:21]), 
     .IDRt(idInst[20:16]), 
     .EXERdOut(exRdOut), 
     .MEMRd(memRd),
     .IFIDWrite(ifIdWrite),
     .pcWrite(pcWrite), 
-    .ifNop(ifNop)
+    .ifNop(ifNop),
+    .ifFlush(ifFlush)
     );
 
     mux2 #(9) m2 (
@@ -267,7 +269,8 @@ module PiplineMips(
     .writeData(memData),
     .readData(memOut),
     .memWrite(memM[1]),
-    .memRead(memM[0])
+    .memRead(memM[0]),
+    .clk(clk)
     );
     //MEMWB:
     MemWbReg memwbReg (
