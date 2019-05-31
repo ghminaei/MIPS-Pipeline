@@ -20,7 +20,6 @@ module DataMemory (
     reg [WORD-1:0]allData[2*LENGTH-1:0];
     initial begin
         $readmemb("datas.txt", allData);
-      //  readData <= 0;
         for (i = 0; i < LENGTH; i = i + 1) begin
             memory[i] = 0;
         end

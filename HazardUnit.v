@@ -1,13 +1,13 @@
 `timescale 1ps/1ps
 module HazardUnit (
-    IDEXMemRead, // just 1 bit
-    MEMmemRead, // just 1 bit
+    IDEXMemRead,
+    MEMmemRead,
     beq, 
     bne, 
-    equal, //from comperator 
+    equal,
     jump, 
     EXERegWrite,
-    MEMRegWrite, //hereee
+    MEMRegWrite,
     IDRs, 
     IDRt, 
     EXERdOut, 
@@ -45,54 +45,53 @@ module HazardUnit (
     assign RTypeCmdMEM = MEMRegWrite;
     assign DataDepEXE = (EXERdOut != 5'b0 && (EXERdOut == IDRs || EXERdOut == IDRt));
     assign DataDepMEM = (MEMRd != 5'b0 && (MEMRd == IDRs || MEMRd == IDRt));
-
+    //Cases:
+    //1- lw in EXE with data Dependency -> stall
+    //2- lw in MEM with data Dependency with beq -> second stall
+    //3- Rtype in EXE then beq -> stall
+    //4- Rtype in MEM then beq -> stall
+    //5,6- Flush after Jump, Beq, Bne
     always@(*) begin
         IFIDWrite = 1;
         pcWrite = 1;
         ifNop = 1;
         ifFlush = 0;
         stall = 0;
-
+        //1-
         if (DataDepEXE && LWCmdEXE) begin
-            //lw with data dependency -> stall
             stall = 1;
             IFIDWrite = 0;
             pcWrite = 0;
             ifNop = 0;
         end
-        
+        //2-
         if (LWCmdMEM && DataDepMEM && (beq || bne)) begin
-            //lw secound stall if beq bne
             stall = 1;
             IFIDWrite = 0;
             pcWrite = 0;
             ifNop = 0;
         end
-
+        //3-
         if (RTypeCmdEXE && (beq || bne) && DataDepEXE) begin
-            //Rtype & beq -> first stall
             stall = 1;
             IFIDWrite = 0;
             pcWrite = 0;
             ifNop = 0;
         end
-
+        //4-
         if (RTypeCmdMEM && (beq || bne) && DataDepMEM) begin
-            //Rtype & beq -> sec stall
             stall = 1;
             IFIDWrite = 0;
             pcWrite = 0;
             ifNop = 0;
         end
-
+        //5-
         if (jump && ~stall) begin
-            //flush after jump
             ifNop = 0;
             ifFlush = 1;
         end
-        
+        //6-
         if ((beq && equal && ~stall) || (bne && ~equal && ~stall)) begin
-            //flush after beq bne
             ifNop = 0;
             ifFlush = 1;
         end

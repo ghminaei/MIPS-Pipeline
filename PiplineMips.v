@@ -79,11 +79,11 @@ module PiplineMips(
 
     //ID:
     HazardUnit hazardUnit(
-    .IDEXMemRead(exM[0]), // just 1 bit
-    .MEMmemRead(memM[0]), // just 1 bit
+    .IDEXMemRead(exM[0]),
+    .MEMmemRead(memM[0]),
     .beq(beq), 
     .bne(bne), 
-    .equal(eq), //from comperator 
+    .equal(eq),
     .jump(j), 
     .EXERegWrite(exWB[1]),
     .MEMRegWrite(memWB[1]),

@@ -64,12 +64,12 @@ module CU (
         else begin
             
             case(opcode)
-            LW: begin //registere 1 o 2 too lw koodoomas?
+            LW: begin
                 aluSrc = 1; 
                 memToReg = 1;
                 regWrite = 1;
                 memRead = 1;
-                regDst = 0; // bastegi dare
+                regDst = 0;
                 memWrite = 0;
                 funcOut = ADDF;
                 pcSrc = 2'b00;

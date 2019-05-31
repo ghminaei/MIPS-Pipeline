@@ -20,8 +20,6 @@ module RegisterFile(
 	initial begin
         for(i = 0; i < 32; i = i+1)
             Registers[i] = 32'b0;
-		    // Registers[1] = 32'd1;
-		    // Registers[6] = 32'd2;
 	end
 	
 	
@@ -32,10 +30,7 @@ module RegisterFile(
 		end
 	end
 	
-	// always @(negedge clk)
-	// begin
 	assign readData1 = Registers[readReg1];
 	assign readData2 = Registers[readReg2];
-	//end
 	
 endmodule

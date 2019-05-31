@@ -8,7 +8,6 @@ module Adder (
     input signed [n-1:0]inp1,
     inp2;
     output signed [n-1:0]out;
-
     assign out = inp1+inp2;
     
 endmodule

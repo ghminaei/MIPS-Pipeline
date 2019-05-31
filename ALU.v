@@ -15,9 +15,9 @@ module ALU (
                SLT = 3'b111, NOP = 3'b011;
 
     assign out = (func == ADD) ? inp1 + inp2 :
-                 (func == SUB) ? inp1 - inp2 ://chi ro bayad too mips az chi kam konim ?
+                 (func == SUB) ? inp1 - inp2 :
                  (func == AND) ? inp1 & inp2 :
-                 (func == OR) ? inp1 | inp2 ://is this or correct?
+                 (func == OR) ? inp1 | inp2 :
                  (func == SLT) ? ((inp1 < inp2) ? 32'd1 : 32'b0) :
                  (func == NOP) ? out :
                  out;         
